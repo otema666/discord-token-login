@@ -232,7 +232,7 @@ GREEN= Fore.GREEN
 
 
 clear()
-animate_text("T h i s   l o a d e r   h a s   b e e n  c r e a t e d   b y   o t e m a", RED, 0.04)
+animate_text("T h i s   l o a d e r   h a s   b e e n   c r e a t e d   b y   o t e m a", RED, 0.04)
 time.sleep(1.5)
 clear()
 
