@@ -3,12 +3,10 @@ from colorama import init, Fore, Style
 import time
 import os
 import ctypes
-import requests
 import json
 import sys
 from datetime import datetime
-from colorama import Fore, init
-
+import requests
 
 ctypes.windll.kernel32.SetConsoleTitleW("Discord Token Loader by OTEMA")
 __version__ = 1.9
@@ -49,8 +47,6 @@ cc_digits = {
     'mastercard': '5'
 }
 #Functions
-def pause():
-    input("Presiona ENTER para cotinuar...")
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -72,7 +68,57 @@ init()
 BLUE = Fore.BLUE
 RED = Fore.RED 
 GREEN= Fore.GREEN
+YELLOW = Fore.YELLOW
+PURPLE= Fore.MAGENTA
+CIAN = Fore.CYAN
 
+def obtener_direccion_ip():
+    try:
+        response = requests.get('https://ipapi.co/json')
+        data = response.json()
+        ip = data['ip']
+        return ip
+    except:
+        return "Direccion IP no encontrada"
+
+def verificar_vpn(ip):
+    api_key = "f0b7f18a3e7541149ae064d21b443589"
+    url = f"https://vpnapi.io/api/{ip}?key={api_key}"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        vpn_status = data['security']['vpn']
+        return vpn_status
+    except:
+        return False  # En caso de error, asumimos que no se está utilizando una VPN
+
+def detectar_vpn():
+    ip = obtener_direccion_ip()
+    if ip:
+        vpn_detected = verificar_vpn(ip)
+        if vpn_detected:
+            return True
+        else:
+            return False
+    else:
+        print("No se pudo obtener la dirección IP.")
+
+
+
+def espacio():
+    for i in range(1):
+        print(" ")
+        for a in range(24):
+            print(GREEN + "-" + Style.RESET_ALL, end="", flush=True)
+            print(RED + "-" + Style.RESET_ALL, end="", flush=True)  
+            print(BLUE + "-" + Style.RESET_ALL, end="", flush=True)
+            print(YELLOW + "-" + Style.RESET_ALL, end="", flush=True)
+            print(PURPLE + "-" + Style.RESET_ALL, end="", flush=True)
+
+def loading(pts):
+    for i in range(pts):
+        time.sleep(0.25)
+        print(".", end="", flush=True)
 
 def TokenInfo():
     init(convert=True) # makes console support ANSI escape color codes
@@ -83,26 +129,54 @@ def TokenInfo():
     token = input()
     clear()
     
+    
+   
+    # Checkeo de uso de VPN
+    print(f'{BLUE}Verificando uso de conexión VPN')
+    print()
+    IP = obtener_direccion_ip()
+    
+    while True:
+        print(f'{GREEN}Checkanding si{RED}', IP, f'{GREEN}es una conexión VPN', end="")
+        loading(5)
+        if detectar_vpn():
+            clear()
+            animate_text("Conexión VPN encontrada", BLUE, 0.02)
+            break
+        else:
+            clear()
+            for i in range(5):
+                t = 5 - i
+                print(f'{YELLOW}Esta es la dirección IP en uso:{RED}',IP,f'{GREEN}.')
+                print()
+                print(f'{GREEN}Debes estar conectado a una {BLUE}VPN{GREEN} para realizar esta solicitud.')
+                for nigger in range(25):
+                    print()
+                print(f'Reintentando de nuevo en:{RED}', t, f'{GREEN}segundos.')
+                time.sleep(1)
+                os.system("cls")
+            
+    print("Comprobando existencia de la cuenta", end="")
+    loading(4)
+    print()
     headers = {
         'Authorization': token,
         'Content-Type': 'application/json'
     }
     res = requests.get('https://discordapp.com/api/v6/users/@me', headers=headers)
-    print("Comprobando existencia de la cuenta...")
-    print()
     if res.status_code == 200: # code 200 if valid
         res_json = res.json()
         user_name = f'{res_json["username"]}#{res_json["discriminator"]}'
-        print(f'{Fore.GREEN}[√]{Fore.RESET}¡CUENTA ENCONTRADA!: {user_name}')
+        print(f'{Fore.GREEN}[√]{Fore.RESET}¡CUENTA ENCONTRADA!: {Fore.BLUE}{user_name}')
+        print()
         animate_text("Presiona ENTER para obtener la información detallada", GREEN, 0.001)
+        
         Style.RESET_ALL
         input()
     
         Style.RESET_ALL
         print(Style.RESET_ALL)
-        print("-------------------------------------------------------------------------------------------------------------------")
-        print("-------------------------------------------------------------------------------------------------------------------")
-        print("")
+        espacio()
         # user info
         
         
@@ -224,7 +298,7 @@ def TokenInfo():
         print('-----')
         print(f'    {Fore.RESET}Locale                 {Fore.RED}{locale} ({language})')
         print(f'    {Fore.RESET}Email Verified         {Fore.RED}{verified}')
-        
+        espacio()
         return token
     elif res.status_code == 401: # code 401 if invalid
         print(f'{Fore.RED}[-] {Fore.RESET}El token introducido no es valido')
@@ -240,9 +314,6 @@ def TokenInfo():
         else:
             print("Me lo tomaré como un no")
             return False
-
-        
-
 
 
 clear()
@@ -260,27 +331,81 @@ while True:
         
 Style.RESET_ALL
 print(Style.RESET_ALL)
-n = ""
-while n != "y" or n != "n":
-    n = str(input("Desea iniciar sesión con este token?  y/n: ")).lower()
-    if n == "y":
-        clear()
+print()
+animate_text("Presiona ENTER para continuar", GREEN, 0.001)
+input()
+
+# Elegimos el navegador
+clear()
+animate_text("Qué navegador desea usar?", GREEN, 0.002)
+print()
+animate_text("1. Google Chrome", PURPLE, 0.0005)
+animate_text("2. Brave Browser", YELLOW, 0.0005)
+animate_text("3. Firefox", RED, 0.001)
+print()
+animate_text("4. Salir", CIAN, 0.001)
+espacio()
+
+print()
+
+while True:
+    nav = int(input())
+    if nav == 1:
+        print()
+        print(f'{GREEN}Navegador ejecutado:     ',  end="")
+        animate_text("G O O G L E  C H R O M E", BLUE, 0.05)
+        print()
+        
+# Configuramos el navegador GOOGLE CHROME
+        options = webdriver.ChromeOptions()
+        options.add_argument('--disable-extensions')
+        options.add_argument('--profile-directory=Default')
+        options.add_argument("--disable-plugins-discovery")
+        options.add_argument("--start-maximized")
+        options.add_argument("--incognito")
+        driver = webdriver.Chrome(options=options)
         break
-    elif n == "n":
+    elif nav == 2:
+        print()
+        print(f'{GREEN}Navegador ejecutado:     ',  end="")
+        animate_text("B R A V E  B R O W S E R", BLUE, 0.05)
+        print()
+        
+        # Configuramos el navegador Brave Browser
+        options = webdriver.ChromeOptions()
+        options.binary_location = 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe'
+        options.add_argument('--disable-extensions')
+        options.add_argument('--profile-directory=Default')
+        options.add_argument("--disable-plugins-discovery")
+        options.add_argument("--start-maximized")
+        options.add_argument("--incognito")
+        driver = webdriver.Chrome(options=options)
+        break
+    elif nav == 3:
+        print()
+        print("Navegador ejecutado:     ", end="")
+        animate_text("F I R E F O X", BLUE, 0.05)
+        print()
+        
+        # Configuramos el navegador Firefox
+        options = webdriver.FirefoxOptions()
+        options.add_argument('--start-maximized')
+        options.add_argument("--start-maximized")
+        options.add_argument('--private-window')
+        driver = webdriver.Firefox(options=options)
+        break
+    elif nav == 4:
         clear()
-        animate_text("Saliendo..................................................................................................", GREEN, 0.01)
+        # Cerramos el navegador
+        print(f'{GREEN}Cerrando sesión.', end="")
+        loading(3)
         exit()
     else:
         animate_text("Respuesta no válida!!", RED, 0)
+        print()
+        continue
 
-# Configuramos el navegador
-options = webdriver.ChromeOptions()
-options.add_argument('--disable-extensions')
-options.add_argument('--profile-directory=Default')
-options.add_argument("--disable-plugins-discovery")
-options.add_argument("--start-maximized")
-options.add_argument("--incognito")
-driver = webdriver.Chrome(options=options)
+
 
 # Abrimos la página de Discord
 driver.get("https://discord.com/login")
@@ -309,5 +434,7 @@ animate_text("TOKEN SUCCESSFULLY INJECTED", BLUE, 0.02)
 print(Fore.RED + "Presiona ENTER para cerrar la sesión")
 input()
 # Cerramos el navegador
-animate_text("Cerrando sesión...........................................", GREEN, 0.01)
+print(f'{GREEN}Cerrando sesión.', end="")
+loading(3)
+
 driver.quit()
