@@ -46,7 +46,105 @@ cc_digits = {
     'visa': '4',
     'mastercard': '5'
 }
+
+
+
 #Functions
+
+def tokens_antiguos():
+    # input("TOKENS ANTOGUOS")
+    tokens = []
+
+    #Leer tokens previamente guardados en tokens.txt
+    
+    with open("tokens.txt", "r") as archivo:
+        for linea in archivo:
+            token = linea.strip()
+            tokens.append(token)
+
+    # Eliminar elementos duplicados de la lista de tokens
+    tokens_unicos = []
+    for token in tokens:
+        if token not in tokens_unicos:
+            tokens_unicos.append(token)
+            
+
+    return tokens_unicos
+
+
+def token_txt(tokina, username):
+    input()
+    tokens = set()
+    tokens = tokens_antiguos()
+    
+    a = 1
+    with open("tokens.txt", "w") as archivo:
+        for num in tokens:
+            a += 1
+        #     print(a,". ", "Token encontrado: ", num)
+        #     print()
+
+        # print("El token a añadir es el nº ", a)
+        # print("Ahora meto el nuevo token: ")
+        # print("NUM: ", a)
+        # print("User: ", username)
+        # print("Token:", tokina)
+        
+        tokens.append(str(a) + ". " + username + "--> "+ tokina)
+        
+        # print("Datos añadidos a la lista, cada linea/elemento es:")
+        # for line in tokens:
+        #     print(line + "\n")
+        
+        for line in tokens:
+            archivo.write(line + "\n")
+                   
+    print(f'{RED}El nuevo {GREEN} token {RED} se han guardado correctamente en el historial.{Fore.RESET}')
+    print("....ENTER....")
+    input()
+
+
+def histo_token():
+    tokens = tokens_antiguos()
+
+    if len(tokens) > 0:
+        num = 0
+        for a in tokens:
+            num += 1
+        print(f'{GREEN}Se han encontrado {num} tokens en tu historial{Fore.RESET}')
+        print()
+        x = 0
+        for token in tokens:
+            print(f'{YELLOW}{token}{RESET}')
+        
+        while True:
+            print()
+            print(f'{PURPLE}¿Desea seleccionar un token guardado? {PURPLE}({GREEN}y{PURPLE}/{RED}n{PURPLE})-->{RESET} ', end="")
+            res = input().lower()
+            print()
+            if res == "y":
+                lista_tokens = list(tokens)
+                num = int(input("Introduce nº del token: "))
+                num -= len(lista_tokens) + 1
+            
+                for linea in lista_tokens:
+                    indice = linea.find(">")  # encontrar el índice del carácter ">"
+                    if indice != -1:  # si se encontró el carácter ">"
+                        token = linea[indice+1:].strip()  # obtener la parte de la línea después del ">"
+                        lista_tokens.append(token)
+
+                token = lista_tokens[num]
+                return token
+                
+            elif res == "n":
+                return False
+            else:
+                print("Respuesta no válida")
+                pass
+    else:
+        return False     
+
+
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -71,6 +169,7 @@ GREEN= Fore.GREEN
 YELLOW = Fore.YELLOW
 PURPLE= Fore.MAGENTA
 CIAN = Fore.CYAN
+RESET = Fore.RESET
 
 def obtener_direccion_ip():
     try:
@@ -104,7 +203,6 @@ def detectar_vpn():
         print("No se pudo obtener la dirección IP.")
 
 
-
 def espacio():
     for i in range(1):
         print(" ")
@@ -120,25 +218,16 @@ def loading(pts):
         time.sleep(0.25)
         print(".", end="", flush=True)
 
-def TokenInfo():
-    init(convert=True) # makes console support ANSI escape color codes
-    # Pedimos el token al usuario
-    Style.RESET_ALL
-    animate_text("Introduce tu token de Discord: ", GREEN, 0.005)
-    Style.RESET_ALL
-    token = input()
-    clear()
-    
-    
-   
+
+
+def print_console_VPN():
     # Checkeo de uso de VPN
     print(f'{BLUE}Verificando uso de conexión VPN')
     print()
-    IP = obtener_direccion_ip()
-    
     while True:
-        print(f'{GREEN}Checkanding si{RED}', IP, f'{GREEN}es una conexión VPN', end="")
-        loading(5)
+        IP = obtener_direccion_ip()
+        print(f'{GREEN}Comprobando si{RED}', IP, f'{GREEN}es una conexión VPN', end="")
+        loading(3)
         if detectar_vpn():
             clear()
             animate_text("Conexión VPN encontrada", BLUE, 0.02)
@@ -155,7 +244,26 @@ def TokenInfo():
                 print(f'Reintentando de nuevo en:{RED}', t, f'{GREEN}segundos.')
                 time.sleep(1)
                 os.system("cls")
-            
+
+
+
+def TokenInfo():
+    init(convert=True) # makes console support ANSI escape color codes
+    # Pedimos el token al usuario
+    Style.RESET_ALL
+    # input("EN TOKENiNFO()(Main), para ir a histoToken = histo_token() ENTER")
+    histoToken = histo_token()
+    if histoToken == False:
+        nuevo_token = True
+        animate_text("Introduce tu token de Discord: ", GREEN, 0.005)
+        Style.RESET_ALL
+        token = input()
+    else:
+        nuevo_token = False
+        token = histoToken
+    
+    clear()
+    print(f'Token: {GREEN}{token}{Fore.RESET}')        
     print("Comprobando existencia de la cuenta", end="")
     loading(4)
     print()
@@ -168,8 +276,16 @@ def TokenInfo():
         res_json = res.json()
         user_name = f'{res_json["username"]}#{res_json["discriminator"]}'
         print(f'{Fore.GREEN}[√]{Fore.RESET}¡CUENTA ENCONTRADA!: {Fore.BLUE}{user_name}')
+        if nuevo_token:
+            # print("Nuevo token detectado, vamos a meterlo al txt, ok?")
+            token_txt(token, user_name)
+        else:
+            # print("No has añadido un nuevo token, con lo cual no hace falta añadirlo al txt")
+            pass
+        
         print()
         animate_text("Presiona ENTER para obtener la información detallada", GREEN, 0.001)
+        
         
         Style.RESET_ALL
         input()
@@ -317,10 +433,12 @@ def TokenInfo():
 
 
 clear()
-animate_text("T h i s   l o a d e r   h a s   b e e n   c r e a t e d   b y   o t e m a", RED, 0.01)
-time.sleep(0.7)
+animate_text("T h i s   l o a d e r   h a s   b e e n   c r e a t e d   b y   o t e m a", RED, 0.008)
+time.sleep(0.5)
 clear()
 
+
+print_console_VPN()
 
 while True:
     token = TokenInfo()
