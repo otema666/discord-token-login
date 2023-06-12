@@ -73,7 +73,6 @@ def tokens_antiguos():
 
 
 def token_txt(tokina, username):
-    input()
     tokens = set()
     tokens = tokens_antiguos()
     
@@ -99,9 +98,7 @@ def token_txt(tokina, username):
         for line in tokens:
             archivo.write(line + "\n")
                    
-    print(f'{RED}El nuevo {GREEN} token {RED} se han guardado correctamente en el historial.{Fore.RESET}')
-    print("....ENTER....")
-    input()
+    print(f'{PURPLE}El nuevo{RED} token {PURPLE}se han guardado correctamente en el historial.{Fore.RESET}')
 
 
 def histo_token():
