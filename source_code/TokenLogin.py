@@ -434,8 +434,11 @@ animate_text("T h i s   l o a d e r   h a s   b e e n   c r e a t e d   b y   o 
 time.sleep(0.5)
 clear()
 
-
-print_console_VPN()
+if str(input(f'{Fore.LIGHTBLACK_EX}ENTER to continue ("y" to bypass vpn)\n')) == "y":
+    clear()
+else:
+    clear()
+    print_console_VPN()
 
 while True:
     token = TokenInfo()
