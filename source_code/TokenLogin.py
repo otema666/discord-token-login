@@ -3,9 +3,8 @@ from colorama import init, Fore, Style
 import time
 import os
 import ctypes
-import json
-import sys
 from datetime import datetime
+from webdriver_manager.chrome import ChromeDriverManager
 import requests
 
 ctypes.windll.kernel32.SetConsoleTitleW("Discord Token Loader by OTEMA")
@@ -481,7 +480,8 @@ while True:
         options.add_argument("--disable-plugins-discovery")
         options.add_argument("--start-maximized")
         options.add_argument("--incognito")
-        driver = webdriver.Chrome(options=options)
+        # driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
         break
     elif nav == 2:
         print()
@@ -497,7 +497,8 @@ while True:
         options.add_argument("--disable-plugins-discovery")
         options.add_argument("--start-maximized")
         options.add_argument("--incognito")
-        driver = webdriver.Chrome(options=options)
+        # driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
         break
     elif nav == 3:
         print()
